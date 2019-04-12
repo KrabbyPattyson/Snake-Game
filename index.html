@@ -1,8 +1,121 @@
-<!doctype html>
-<html>
-<head>
+<html><head>
+<script>
+function setup(){
+var canvas = document.getElementById("canvas");
+var ctx = canvas.getContext("2d");
+var s,f,gameInterval;
+var scale = 10;
+
+function Snake(){
+	this.x = 5 * scale;
+	this.y = 5 * scale;
+	this.xSpeed = 0;
+	this.ySpeed = 0;
+	this.color = "#000";
+	ctx.fillStyle = this.color;
+	this.blockHistoryY = [this.y];
+	this.blockHistoryX = [this.x];
+	this.total = 1;
+	this.no180 = ""; //Used to prevent going backwards/ doing 180s
+	this.update = function(){
+		ctx.clearRect(this.blockHistoryX[0],this.blockHistoryY[0],scale,scale)
+		this.x += this.xSpeed;
+		this.y += this.ySpeed;
+		ctx.fillStyle = this.color;
+		ctx.fillRect(this.x,this.y,scale,scale)
+		this.eatsFood();
+		this.isDead();
+		ctx.clearRect(this.blockHistoryX[0],this.blockHistoryY[0],scale,scale);
+		for(var i = 1; i <= this.total-1; i++){ //Take in/ Throw out blocks
+			this.blockHistoryX[i-1] = this.blockHistoryX[i];
+			this.blockHistoryY[i-1] = this.blockHistoryY[i];
+        }
+		this.blockHistoryX[this.total-1] = this.x;
+		this.blockHistoryY[this.total-1] = this.y;		
+		for(var i = 1; i <= this.total; i++){ //Fill in all the blocks
+			ctx.fillRect(this.blockHistoryX[i],this.blockHistoryY[i],scale,scale);
+        }
+		//console.log("X: "+this.blockHistoryX+" Y: "+this.blockHistoryY+" Total: "+this.total);
+    }
+	this.eatsFood = function(){
+		
+		if(this.x == f.x && this.y == f.y){
+			f.newLocation()
+			ctx.fillStyle = f.color;
+			ctx.fillRect(f.x,f.y,scale,scale);
+			this.total+=4;
+			this.blockHistoryX[this.total] = this.x;
+			this.blockHistoryY[this.total] = this.y;
+			//console.log(this.total+" New location: "+f.x+" "+f.y);
+        }
+    }
+    this.isDead = function(){
+      if(this.total > 1){
+        for(var i = 0; i <= this.total-1; i++){
+          if(this.x === this.blockHistoryX[i] && this.y === this.blockHistoryY[i]){
+            clearInterval(gameInterval);
+            alert("Game over!");
+          }
+        }
+      }
+    }
+}
+
+function Food(){
+	this.x = Math.floor(Math.random() * parseInt(canvas.width-scale)/scale) * scale
+	this.y = Math.floor(Math.random() * parseInt(canvas.height-scale)/scale) * scale;
+	this.color = "#e04040";
+	this.newLocation = function(){
+		
+		this.x = Math.floor(Math.random() * canvas.width/scale) * scale;
+		this.y = Math.floor(Math.random() * canvas.height/scale) * scale;
+    }
+}
+
+document.body.addEventListener("keydown",function(e){
+	//console.log(e);
+	if(e.key == "ArrowUp" && s.no180 !== "Vertical"){
+		s.xSpeed = 0;
+		s.ySpeed = -1 * scale;
+		s.no180 = "Vertical";
+	}
+	else if(e.key == "ArrowDown" && s.no180 !== "Vertical"){
+		s.xSpeed = 0;
+		s.ySpeed = 1 * scale;
+		s.no180 = "Vertical";
+	}
+	else if(e.key == "ArrowLeft" && s.no180 !== "Horizontal"){
+		s.xSpeed = -1 * scale;
+		s.ySpeed = 0;
+		s.no180 = "Horizontal";
+	}
+	else if(e.key == "ArrowRight" && s.no180 !== "Horizontal"){
+		s.xSpeed = 1 * scale;
+		s.ySpeed = 0;
+		s.no180 = "Horizontal";
+	}
+})
+
+s = new Snake();
+f = new Food();
+ctx.fillStyle = f.color;
+ctx.fillRect(f.x,f.y,scale,scale);
+gameInterval = setInterval(function(){s.update()},100);
+}
+  </script>
+<style>
+canvas{
+	background-color:#b0b0b0; 
+	border: solid 2px #909090;
+}
+</style>
 </head>
-<body>
-  <p>Just testing, still figuring out GitHub</p>
-</body>
-</html>
+<body onload="setup();">
+  <canvas id="canvas" height="600" width="1000">
+  <div>
+    <button id="play" onclick="function(){gameInterval = setInterval(function(){s.update()},100)};">Resume</button>
+    <button id="pause" onclick="function(){clearInterval(gameInterval)};">Pause</button>
+    </div>
+
+
+</canvas></body></html>
