@@ -1,4 +1,13 @@
 <html><head>
+	<style>
+	canvas{
+		background-color:#b0b0b0; 
+		border: solid 2px #909090;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+	}
+	</style>
 <script>
 function setup(){
 var canvas = document.getElementById("canvas");
@@ -103,19 +112,14 @@ ctx.fillRect(f.x,f.y,scale,scale);
 gameInterval = setInterval(function(){s.update()},100);
 }
   </script>
-<style>
-canvas{
-	background-color:#b0b0b0; 
-	border: solid 2px #909090;
-}
-</style>
+
 </head>
 <body onload="setup();">
-  <canvas id="canvas" height="600" width="1000">
+	<canvas id="canvas" height="600" width="1000">Your browser doesn't support my high-tech programming, sorry :/</canvas>
   <div>
     <button id="play" onclick="function(){gameInterval = setInterval(function(){s.update()},100)};">Resume</button>
     <button id="pause" onclick="function(){clearInterval(gameInterval)};">Pause</button>
     </div>
 
 
-</canvas></body></html>
+</body></html>
